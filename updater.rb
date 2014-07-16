@@ -17,6 +17,7 @@ PAGE = 10
 
 
 index = 1
+current = 1
 total_count = Unirest.get("#{BASE_URL}/_count").body["count"]
 
 while true
@@ -25,16 +26,11 @@ while true
   break if results.empty?
 
   results.each do |result|
-    puts result["_id"]
     Unirest.post "#{BASE_URL}/#{result["_id"]}/_update",
                 parameters: Yajl::Encoder.encode({doc: ATTRIBUTES}) do |response|
-      puts response.body
+      current += 1
+      puts "Updated #{current}/#{total_count}"
     end
   end
   index += PAGE
 end
-
-
-
-puts page.body["hits"]["hits"]
-
